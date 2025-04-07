@@ -1,0 +1,1166 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeasonEdge - AI Seasonality Analysis [DEMO TEMPLATE]</title>
+    <style>
+        /* --- Global Resets & Dark Theme Defaults --- */
+        :root {
+            /* Dark Theme Palette */
+            --color-bg-dark-primary: #0F172A;  /* Very Dark Blue/Slate */
+            --color-bg-dark-secondary: #1E293B; /* Slightly Lighter Dark Blue/Slate */
+            --color-bg-card: #334155;        /* Card Background */
+            --color-primary-accent: #3B82F6;  /* Blue Accent */
+            --color-secondary-accent: #10B981;/* Teal/Green Accent */
+            --color-cta: #82D413;             /* Bright Green CTA */
+            --color-cta-hover: #98f518;        /* Lighter CTA Hover */
+            --color-cta-text: #0F172A;         /* Dark Text on CTA */
+            --color-text-light: #F1F5F9;      /* Main Light Text (Off-white) */
+            --color-text-medium: #94A3B8;     /* Muted Light Text */
+            --color-text-dark-placeholder: #1F2937; /* Dark text (Use sparingly on dark theme) */
+            --color-border: #475569;          /* Border color for dark theme */
+            --font-primary: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+        body {
+            margin: 0;
+            font-family: var(--font-primary);
+            line-height: 1.7;
+            color: var(--color-text-medium); /* Default text medium light */
+            background-color: var(--color-bg-dark-primary); /* Dark background */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        * { box-sizing: border-box; }
+        h1, h2, h3, h4, h5, h6 { margin-top: 0; margin-bottom: 0.75em; font-weight: 700; line-height: 1.3; color: var(--color-text-light); } /* Light headings */
+        p { margin-top: 0; margin-bottom: 1.2em; font-size: 1rem; } /* Inherits body color (medium light) */
+        a { color: var(--color-secondary-accent); text-decoration: none; transition: color 0.2s ease; }
+        a:hover { color: #34D399; /* Lighter teal hover */ text-decoration: underline; }
+        img { max-width: 100%; height: auto; display: block; }
+        ul, ol { list-style: none; padding: 0; margin: 0; }
+        strong { font-weight: 600; color: var(--color-text-light); } /* Make strong text lighter */
+
+        /* --- Layout & Sections --- */
+        .container { max-width: 1140px; margin-left: auto; margin-right: auto; padding-left: 20px; padding-right: 20px; }
+        section { padding: 80px 0; overflow: hidden; }
+        /* Removed light/gray bg classes, default is dark. Add specific bg if needed */
+         .section-contrast { background-color: var(--color-bg-dark-secondary); } /* Example for slight contrast */
+
+        /* Section Headers */
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: clamp(2rem, 5vw, 2.8rem); margin-bottom: 0.5em; }
+        .section-header p { max-width: 700px; margin-left: auto; margin-right: auto; font-size: 1.1rem; color: var(--color-text-medium); } /* Adjusted for dark */
+
+        /* Buttons */
+        .btn { display: inline-block; padding: 12px 32px; font-size: 1rem; font-weight: 600; text-align: center; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; border: none; line-height: 1.5; }
+        .btn-primary { background-color: var(--color-cta); color: var(--color-cta-text); }
+        .btn-primary:hover { background-color: var(--color-cta-hover); color: var(--color-cta-text); text-decoration: none; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(130, 212, 19, 0.3); }
+        .btn-secondary-outline { background-color: transparent; color: var(--color-cta); border: 2px solid var(--color-cta); } /* Use CTA color for outline */
+        .btn-secondary-outline:hover { background-color: var(--color-cta); color: var(--color-cta-text); text-decoration: none; }
+        .btn-nav { padding: 8px 20px; font-size: 0.9rem; background-color: var(--color-cta); color: var(--color-cta-text); }
+        .btn-nav:hover { background-color: var(--color-cta-hover); color: var(--color-cta-text); text-decoration: none; }
+
+        /* --- Specific Sections Styling (Mimicking Reference - Dark Theme) --- */
+
+        /* Navigation */
+        nav { position: fixed; top: 0; left: 0; width: 100%; padding: 15px 0; z-index: 1000; transition: background-color 0.3s ease, box-shadow 0.3s ease; background-color: rgba(30, 41, 59, 0.8); /* Slightly lighter dark bg */ backdrop-filter: blur(8px); border-bottom: 1px solid transparent; }
+        nav.scrolled { background-color: rgba(30, 41, 59, 0.95); border-bottom: 1px solid var(--color-border); box-shadow: 0 2px 5px rgba(0,0,0,0.1); } /* Can still add subtle shadow/border */
+        nav .container { display: flex; justify-content: space-between; align-items: center; }
+        nav .logo { font-weight: 800; font-size: 1.7rem; color: var(--color-text-light); }
+        nav ul { display: flex; align-items: center; }
+        nav ul li { margin-left: 35px; }
+        nav ul li a { color: var(--color-text-medium); font-weight: 500; font-size: 1rem; }
+        nav ul li a:hover { color: var(--color-text-light); text-decoration: none; }
+
+        /* Hero Section */
+        .hero { display: flex; align-items: center; justify-content: center; min-height: 80vh; padding: 160px 20px 100px 20px; text-align: center; color: var(--color-text-light); background-color: var(--color-bg-dark-primary); /* Ensure hero bg matches body or is set */ overflow: hidden; /* Contain elements */ position: relative; z-index: 1; }
+        .hero .container { position: relative; z-index: 2; } /* Content above any pseudo-elements */
+        .hero h1 { font-size: clamp(2.8rem, 7vw, 4.5rem); color: var(--color-text-light); font-weight: 800; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .hero .subheadline { font-size: clamp(1.1rem, 3vw, 1.4rem); max-width: 700px; margin: 1.5em auto 2.5em auto; color: var(--color-text-medium); }
+        .hero .cta-buttons { margin-bottom: 30px; }
+        .hero .btn { padding: 15px 35px; font-size: 1.1rem; }
+        .hero .btn-secondary-link { margin-left: 15px; color: var(--color-text-medium); font-weight: 500; }
+        .hero .btn-secondary-link:hover { color: var(--color-text-light); }
+        .hero .social-proof-hero span { display: block; margin-bottom: 15px; color: var(--color-text-muted); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+        .hero .social-proof-hero img { height: 25px; margin: 0 12px; opacity: 0.7; filter: brightness(0) invert(0.8); /* Adjust filter for dark bg */ display: inline-block; vertical-align: middle; }
+
+        /* Trusted By Section */
+        .trusted-by { text-align: center; padding: 50px 0; background-color: var(--color-bg-dark-secondary); /* Slightly different dark */ }
+        .trusted-by span { display: block; margin-bottom: 30px; color: var(--color-text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem; }
+        .trusted-by .logos img { height: 30px; margin: 10px 25px; opacity: 0.6; filter: brightness(0) invert(0.7); /* Adjust filter */ display: inline-block; vertical-align: middle; }
+
+        /* Alternating Feature Sections (Text/Image) */
+        .feature-section { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 60px; }
+        .feature-section h2 { font-size: 2.2rem; margin-bottom: 0.7em; font-weight: 700; color: var(--color-text-light); }
+        .feature-section p { font-size: 1.05rem; margin-bottom: 1.5em; color: var(--color-text-medium); }
+        .feature-section ul li { position: relative; padding-left: 25px; margin-bottom: 10px; color: var(--color-text-medium); }
+        .feature-section ul li::before { content: '✓'; position: absolute; left: 0; color: var(--color-secondary-accent); font-weight: bold; }
+        .feature-section img { border-radius: 8px; background-color: #fff; /* Add white bg to placeholder */ padding: 5px; /* Add padding */ }
+        .feature-section.reverse .image-content { order: -1; }
+
+        /* How it Works (Steps) */
+        .steps-section .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; text-align: center; }
+        .steps-section .step .step-number { display: inline-block; width: 45px; height: 45px; line-height: 45px; border-radius: 50%; background-color: var(--color-primary-accent); color: white; font-weight: bold; margin-bottom: 20px; font-size: 1.2rem;}
+        .steps-section .step h4 { font-size: 1.3rem; margin-bottom: 0.5em; font-weight: 600; color: var(--color-text-light); }
+        .steps-section .step p { font-size: 1rem; color: var(--color-text-medium); }
+
+        /* Features Grid Style (Alternative) */
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 35px; }
+        .feature-item { text-align: left; /* Align text left */ }
+        .feature-item .icon { font-size: 2.5rem; margin-bottom: 15px; color: var(--color-secondary-accent); }
+        .feature-item h4 { font-size: 1.2rem; margin-bottom: 0.5em; font-weight: 600; color: var(--color-text-light); }
+        .feature-item p { font-size: 0.95rem; color: var(--color-text-medium); }
+
+        /* Testimonials */
+        .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .testimonial-card { background-color: var(--color-bg-dark-secondary); border: 1px solid var(--color-border); border-radius: 10px; padding: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .testimonial-card .quote { font-size: 1.05rem; font-style: italic; margin-bottom: 20px; color: var(--color-text-medium); position: relative; padding-left: 30px; }
+        .testimonial-card .quote::before { content: '“'; position: absolute; left: 0; top: -10px; font-size: 2.5em; color: var(--color-primary-accent); opacity: 0.6; }
+        .testimonial-card .author { display: flex; align-items: center; margin-top: 25px; }
+        .testimonial-card .author img { width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; background-color: #555; /* Darker placeholder */ }
+        .testimonial-card .author-info .name { font-weight: 600; color: var(--color-text-light); }
+        .testimonial-card .author-info .title { font-size: 0.9em; color: var(--color-text-muted); }
+
+        /* Pricing Section */
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; align-items: stretch; /* Align card heights */ }
+        .pricing-card { border: 1px solid var(--color-border); border-radius: 10px; padding: 35px; text-align: center; background-color: var(--color-bg-dark-secondary); display: flex; flex-direction: column; }
+        .pricing-card.highlighted { border-color: var(--color-primary-accent); border-width: 2px; transform: scale(1.03); /* Make it pop */ z-index: 5; }
+        .pricing-card h4 { font-size: 1.4rem; margin-bottom: 0.5em; font-weight: 600; color: var(--color-text-light); }
+        .pricing-card .plan-description { font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1.5em; min-height: 40px; /* Align descriptions */ }
+        .pricing-card .price { font-size: 3rem; font-weight: 700; color: var(--color-text-light); margin-bottom: 0.2em; }
+        .pricing-card .price span { font-size: 1rem; font-weight: 400; color: var(--color-text-muted); }
+        .pricing-card ul { text-align: left; margin: 30px 0; flex-grow: 1; /* Push button down */ }
+        .pricing-card ul li { margin-bottom: 12px; padding-left: 25px; position: relative; color: var(--color-text-medium); font-size: 0.95rem; }
+        .pricing-card ul li::before { content: '✓'; position: absolute; left: 0; color: var(--color-secondary-accent); }
+        .pricing-card .btn { display: block; width: 100%; margin-top: auto; /* Stick to bottom */ } /* Ensure button at bottom */
+
+        /* FAQ Section */
+        .faq-item { border-bottom: 1px solid var(--color-border); padding: 25px 0; }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-question { font-weight: 600; cursor: pointer; position: relative; padding-right: 30px; color: var(--color-text-light); font-size: 1.1rem; }
+        .faq-question::after { content: '+'; position: absolute; right: 0; top: 0; font-size: 1.3em; transition: transform 0.2s ease; color: var(--color-text-muted); }
+        .faq-answer { display: none; padding-top: 15px; color: var(--color-text-medium); }
+        .faq-item.open .faq-answer { display: block; }
+        .faq-item.open .faq-question::after { transform: rotate(45deg); color: var(--color-primary-accent); }
+
+        /* Final CTA */
+        .final-cta { text-align: center; }
+        .final-cta h2 { font-size: 2.5rem; margin-bottom: 1em; max-width: 700px; margin-left: auto; margin-right: auto; color: var(--color-text-light); }
+
+        /* Footer */
+        footer { background-color: #000000; /* Even darker footer */ color: #94A3B8; padding: 40px 0; text-align: center; font-size: 0.9rem; margin-top: 60px; }
+        footer .container { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        footer .footer-links a { color: #D1D5DB; margin: 0 10px; }
+        footer .footer-links a:hover { color: var(--color-text-light); }
+        footer p { margin-bottom: 0.5em; color: #94A3B8; }
+
+        /* --- Simple Responsive --- */
+         @media (max-width: 992px) {
+             .container { max-width: 960px; }
+             .feature-section { gap: 40px; }
+         }
+         @media (max-width: 768px) {
+             h1 { font-size: 2.5rem !important; }
+             .hero h1 { font-size: clamp(2rem, 7vw, 2.8rem) !important; }
+             .section-header h2, .final-cta h2 { font-size: 1.8rem !important; }
+             .feature-section { grid-template-columns: 1fr; }
+             .feature-section .image-content { margin-top: 30px; }
+             .feature-section.reverse .image-content { order: 0; }
+             nav ul { display: none; }
+             .hero .social-proof-hero img { height: 20px; margin: 5px 8px; }
+         }
+         @media (max-width: 576px) {
+             .btn { width: 100%; margin-bottom: 10px; }
+             .hero .cta-buttons .btn { display: block; }
+             .hero .btn-secondary-link { display: block; margin-left: 0; margin-top: 10px; text-align: center; }
+             .trusted-by .logos img { height: 25px; margin: 8px 10px; }
+             .testimonial-card { padding: 20px; }
+             .pricing-card { padding: 20px; }
+             .pricing-card .price { font-size: 2rem; }
+         }
+
+    </style>
+</head>
+<body>
+    <nav id="main-nav">
+        <div class="container">
+             <a href="#" class="logo">SeasonEdge</a>
+            <ul>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
+                 <li><a href="#faq">FAQ</a></li>
+                <li><a href="#">Login</a></li>
+                <li><a href="#" class="btn btn-nav">Get Started</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Find Your Trading Edge with AI-Powered Seasonality</h1>
+                <p class="subheadline">Leverage decades of market data and advanced AI to uncover high-probability seasonal stock patterns. Stop guessing, start trading with a data-driven edge.</p>
+                <div class="hero-cta">
+                    <a href="#" class="btn btn-primary btn-lg">Start 7-Day Free Trial</a>
+                    </div>
+                <div class="social-proof-hero">
+                    <span>TRUSTED BY ACTIVE TRADERS</span>
+                    <img src="https://via.placeholder.com/80x25/94A3B8/0F172A?text=Trader+Logo" alt="Trader Logo Placeholder 1">
+                    <img src="https://via.placeholder.com/80x25/94A3B8/0F172A?text=Investor+Group" alt="Investor Group Logo Placeholder">
+                    <img src="https://via.placeholder.com/80x25/94A3B8/0F172A?text=Quant+Blog" alt="Quant Blog Logo Placeholder">
+                </div>
+            </div>
+        </section>
+
+        <section class="trusted-by section-contrast"> <div class="container">
+                <span>AS MENTIONED IN LEADING FINANCIAL PUBLICATIONS (EXAMPLE)</span>
+                <div class="logos">
+                     <img src="https://via.placeholder.com/150x40/94A3B8/1E293B?text=Investopedia" alt="Investopedia Placeholder Logo">
+                    <img src="https://via.placeholder.com/150x40/94A3B8/1E293B?text=MarketWatch" alt="MarketWatch Placeholder Logo">
+                    <img src="https://via.placeholder.com/150x40/94A3B8/1E293B?text=Benzinga" alt="Benzinga Placeholder Logo">
+                    <img src="https://via.placeholder.com/150x40/94A3B8/1E293B?text=Seeking+Alpha" alt="Seeking Alpha Placeholder Logo">
+                </div>
+            </div>
+        </section>
+
+        <section class="section-bg-dark text-image-section">
+             <div class="container feature-section">
+                 <div class="text-content">
+                      <h2>Stop Leaving Money on the Table</h2>
+                     <p>Seasonal trends are powerful but often subtle. Relying on basic calendar effects or manual charting means you're likely missing statistically significant opportunities and acting on noise. Get clarity and confidence with AI.</p>
+                     <ul>
+                         <li>Identify high-probability seasonal windows.</li>
+                         <li>Filter out statistically weak patterns.</li>
+                         <li>Optimize entry and exit timing based on history.</li>
+                     </ul>
+                 </div>
+                 <div class="image-content">
+                     <img src="https://via.placeholder.com/500x350/1E293B/94A3B8?text=Chart+with+Missed+Opportunity" alt="Placeholder chart showing a missed seasonal trend">
+                 </div>
+             </div>
+        </section>
+
+        <section id="how-it-works" class="section-contrast steps-section"> <div class="container">
+                  <div class="section-header">
+                     <h2>Your Path to Data-Driven Seasonal Trading</h2>
+                     <p>SeasonEdge simplifies complex analysis into actionable steps.</p>
+                 </div>
+                 <div class="steps-grid">
+                     <div class="step">
+                         <div class="step-number">1</div>
+                         <h4>Scan & Screen</h4>
+                         <p>Quickly scan stocks, ETFs, or sectors using our AI-powered seasonal screener.</p>
+                     </div>
+                     <div class="step">
+                         <div class="step-number">2</div>
+                         <h4>Analyze & Visualize</h4>
+                         <p>Dive deep into interactive charts showing seasonal strength, consistency, and optimal timing.</p>
+                     </div>
+                     <div class="step">
+                          <div class="step-number">3</div>
+                         <h4>Plan & Execute</h4>
+                         <p>Use probability scores and backtesting data to inform your trading decisions with confidence.</p>
+                     </div>
+                 </div>
+             </div>
+        </section>
+
+        <section id="features" class="section-bg-dark features">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Unlock Advanced Seasonal Insights</h2>
+                    <p>Go beyond simple averages with our powerful feature set.</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="icon">📈</div> <h4>AI Pattern Recognition</h4>
+                        <p>Detects complex seasonal trends, including pre/post-holiday effects and sector rotations.</p>
+                    </div>
+                     <div class="feature-item">
+                        <div class="icon">🔍</div> <h4>Robust Statistical Analysis</h4>
+                        <p>Provides significance testing and probability scores for data-driven confidence.</p>
+                    </div>
+                     <div class="feature-item">
+                        <div class="icon">⚙️</div> <h4>Customizable Parameters</h4>
+                        <p>Adjust lookback periods, significance levels, and asset classes to match your strategy.</p>
+                    </div>
+                     <div class="feature-item">
+                        <div class="icon">⚡</div> <h4>Fast Market Screening</h4>
+                        <p>Quickly identify top seasonal candidates across thousands of instruments daily.</p>
+                    </div>
+                     <div class="feature-item">
+                        <div class="icon">📊</div> <h4>Intuitive Charts</h4>
+                        <p>Visualize seasonal windows, historical performance, and probability distributions easily.</p>
+                    </div>
+                     <div class="feature-item">
+                        <div class="icon">🔔</div> <h4>Watchlist & Alerts</h4>
+                        <p>Track your favorite assets and get notified of upcoming seasonal opportunities.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+         <section id="testimonials" class="section-contrast testimonials"> <div class="container">
+                <div class="section-header">
+                     <h2>Traders Are Gaining Their Edge</h2>
+                </div>
+                <div class="testimonials-grid">
+                     <div class="testimonial-card">
+                         <p class="quote">"The backtesting feature confirmed a seasonal strategy I suspected for years. SeasonEdge gave me the data to trade it with confidence."</p>
+                         <div class="author">
+                            <img src="https://via.placeholder.com/50x50/EEEEEE/AAAAAA?text=AR" alt="User Alex R. Photo Placeholder">
+                            <div class="author-info">
+                                <span class="name">Alex R.</span>
+                                <span class="title">Options Trader</span>
+                            </div>
+                         </div>
+                     </div>
+                     <div class="testimonial-card">
+                         <p class="quote">"Identifying the *end* of a seasonal window is just as important as the start. SeasonEdge helps with both, improving my risk management."</p>
+                          <div class="author">
+                            <img src="https://via.placeholder.com/50x50/EEEEEE/AAAAAA?text=CH" alt="User Chloe H. Photo Placeholder">
+                            <div class="author-info">
+                                <span class="name">Chloe H.</span>
+                                <span class="title">Independent Investor</span>
+                            </div>
+                         </div>
+                     </div>
+                     <div class="testimonial-card">
+                         <p class="quote">"Forget generic 'Best Six Months'. This AI finds granular, stock-specific seasonality that actually provides an edge. Impressive tool."</p>
+                          <div class="author">
+                            <img src="https://via.placeholder.com/50x50/EEEEEE/AAAAAA?text=DN" alt="User David N. Photo Placeholder">
+                            <div class="author-info">
+                                <span class="name">David N.</span>
+                                <span class="title">Former Quant Analyst</span>
+                            </div>
+                         </div>
+                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing" class="section-bg-dark pricing">
+             <div class="container">
+                 <div class="section-header">
+                     <h2>Find the Plan That Fits Your Needs</h2>
+                     <p>Start leveraging seasonal data today. Simple, transparent pricing.</p>
+                 </div>
+                 <div class="pricing-grid">
+                     <div class="pricing-card">
+                         <h4>Explorer</h4>
+                         <p class="plan-description">Get started with basic seasonal analysis.</p>
+                         <div class="price">$0<span>/ month</span></div>
+                         <ul>
+                             <li>Basic Seasonality Score (1 Asset)</li>
+                             <li>Limited Historical Data</li>
+                             <li>Standard Visualizations</li>
+                             <li>Community Forum Access</li>
+                             <li>-</li> </ul>
+                         <a href="#" class="btn btn-secondary-outline">Get Started</a>
+                     </div>
+                     <div class="pricing-card highlighted">
+                         <h4>Pro Trader</h4>
+                         <p class="plan-description">Unlock advanced AI insights and tools.</p>
+                         <div class="price">$49<span>/ month</span></div>
+                         <ul>
+                             <li>Advanced AI Seasonality Engine</li>
+                             <li>Full Historical Data Access</li>
+                             <li>Market Screener (Up to 100 Assets)</li>
+                             <li>Probability & Significance Scores</li>
+                             <li>Backtesting Module Access</li>
+                             <li>Priority Support</li>
+                         </ul>
+                         <a href="#" class="btn btn-primary">Start Pro Trial</a>
+                     </div>
+                     <div class="pricing-card">
+                         <h4>Institutional</h4>
+                         <p class="plan-description">For funds, advisors, and API access.</p>
+                         <div class="price">Contact Us</div>
+                         <ul>
+                             <li>All Pro Features</li>
+                             <li>Unlimited Asset Screening</li>
+                             <li>API Access for Integration</li>
+                             <li>Custom Data Feeds</li>
+                             <li>Dedicated Account Manager</li>
+                         </ul>
+                         <a href="#" class="btn btn-secondary-outline">Request Demo</a>
+                     </div>
+                 </div>
+                 </div>
+        </section>
+
+
+         <section id="faq" class="section-contrast faq">
+              <div class="container" style="max-width: 800px;">
+                  <div class="section-header">
+                     <h2>Common Questions</h2>
+                 </div>
+                 <div class="faq-list">
+                     <div class="faq-item">
+                         <h4 class="faq-question">What data sources does SeasonEdge use?</h4>
+                         <div class="faq-answer">
+                             <p>We utilize decades of high-quality, adjusted historical price data from reputable financial data providers, covering stocks, ETFs, and major indices.</p>
+                         </div>
+                     </div>
+                     <div class="faq-item">
+                         <h4 class="faq-question">Is seasonality guaranteed to work?</h4>
+                         <div class="faq-answer">
+                             <p>No trading strategy is guaranteed. Seasonality analysis identifies historical tendencies and probabilities based on past performance. While these patterns can provide an edge, past performance is not indicative of future results, and risk management is crucial.</p>
+                         </div>
+                     </div>
+                     <div class="faq-item">
+                         <h4 class="faq-question">How is the AI different from simple monthly averages?</h4>
+                         <div class="faq-answer">
+                             <p>Our AI goes beyond basic calendar effects. It analyzes patterns across different timeframes, considers statistical significance, volatility, and other factors to identify more robust and nuanced seasonal opportunities compared to simple monthly return calculations.</p>
+                         </div>
+                     </div>
+                      <div class="faq-item">
+                         <h4 class="faq-question">Can I cancel my subscription anytime?</h4>
+                         <div class="faq-answer">
+                             <p>Yes, you can easily manage and cancel your subscription at any time through your account settings. Access continues until the end of your current billing period.</p>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </section>
+
+         <section class="section-bg-dark final-cta">
+              <div class="container">
+                 <h2>Start Making Data-Driven Seasonal Trades</h2>
+                 <a href="#" class="btn btn-primary btn-lg">Get SeasonEdge Free Trial</a>
+             </div>
+         </section>
+
+    </main>
+
+    <footer>
+         <div class="container">
+            <div class="footer-links">
+                 <a href="#">Blog</a>
+                 <a href="#">Contact</a>
+                 <a href="#">Privacy Policy</a>
+                 <a href="#">Terms of Service</a>
+            </div>
+             <p>&copy; 2025 [Your Company Name]. All Rights Reserved.</p>
+             <p style="font-size: 0.8rem; opacity: 0.7;">Disclaimer: All content and images on this page are illustrative examples and placeholders. Replace with your own licensed assets and specific product information.</p>
+         </div>
+    </footer>
+
+    <script>
+        const nav = document.getElementById('main-nav');
+        if(nav){
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 30) { // Add scrolled class earlier on dark theme potentially
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
+        }
+
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            if(question){
+                question.addEventListener('click', () => {
+                    // Optional: Close others when one opens
+                    // faqItems.forEach(otherItem => {
+                    //    if (otherItem !== item) {
+                    //        otherItem.classList.remove('open');
+                    //    }
+                    //});
+                    item.classList.toggle('open');
+                });
+            }
+        });
+        // Add JS for mobile nav toggle if needed
+        // Add JS for scroll reveal animations (e.g., using Intersection Observer API)
+    </script>
+
+</body>
+</html>
+ -->
+
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>SeasonEdge - AI Seasonality Analysis [Card Flip]</title>
+     <!-- Font Awesome CDN -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+     <style>
+         /* --- Global Resets & Dark Theme Defaults --- */
+         :root {
+             --color-bg-dark-primary: #101014;
+             --color-bg-dark-secondary: #1A1A1F;
+             --color-bg-card: #222228;
+             --color-primary-accent: #00E5FF; /* Neon Cyan/Blue */
+             --color-secondary-accent: #3B82F6; /* Blue */
+             --color-cta: var(--color-primary-accent);
+             --color-cta-hover: #80FFFF;
+             --color-cta-text: #0A0F1A;
+             --color-text-light: #EAEAEA;
+             --color-text-medium: #A0A0A0;
+             --color-text-muted: #777777;
+             --color-border: #333338;
+             --font-primary: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+         }
+         body { margin: 0; font-family: var(--font-primary); line-height: 1.7; color: var(--color-text-medium); background-color: var(--color-bg-dark-primary); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+         * { box-sizing: border-box; }
+         h1, h2, h3, h4, h5, h6 { margin-top: 0; margin-bottom: 0.75em; font-weight: 700; line-height: 1.3; color: var(--color-text-light); }
+         h1, h2, h3 { text-shadow: 0 1px 1px rgba(0,0,0,0.7), 0 0 8px rgba(0, 229, 255, 0.3), 0 0 15px rgba(0, 229, 255, 0.2); }
+         .section-header h2 { text-shadow: 0 1px 1px rgba(0,0,0,0.6), 0 0 5px rgba(0, 229, 255, 0.25); }
+         p { margin-top: 0; margin-bottom: 1.2em; font-size: 1rem; }
+         a { color: var(--color-primary-accent); text-decoration: none; transition: color 0.2s ease; }
+         a:hover { color: var(--color-accent-neon-blue-hover); text-decoration: none; }
+         img { max-width: 100%; height: auto; display: block; }
+         ul, ol { list-style: none; padding: 0; margin: 0; }
+         strong { font-weight: 600; color: var(--color-text-light); }
+ 
+         /* --- Layout & Sections --- */
+         .container { max-width: 1140px; margin-left: auto; margin-right: auto; padding-left: 20px; padding-right: 20px; position: relative; z-index: 2; }
+         section { padding: 80px 0; overflow: hidden; position: relative; z-index: 1; }
+         .section-opaque-dark { background-color: var(--color-bg-dark-primary); }
+         .section-opaque-contrast { background-color: var(--color-bg-dark-secondary); }
+         .section-header { text-align: center; margin-bottom: 60px; }
+         .section-header p { max-width: 700px; margin-left: auto; margin-right: auto; font-size: 1.1rem; color: var(--color-text-medium); }
+ 
+         /* Buttons */
+         .btn { display: inline-block; padding: 12px 32px; font-size: 1rem; font-weight: 600; text-align: center; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--color-cta); line-height: 1.5; }
+         .btn-primary { background-color: var(--color-cta); color: var(--color-cta-text); border-color: var(--color-cta); }
+         .btn-primary:hover { background-color: var(--color-cta-hover); border-color: var(--color-cta-hover); color: var(--color-cta-text); text-decoration: none; transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0, 229, 255, 0.3); }
+         .btn-secondary-outline { background-color: transparent; color: var(--color-cta); border-color: var(--color-cta); }
+         .btn-secondary-outline:hover { background-color: rgba(0, 229, 255, 0.1); border-color: var(--color-cta-hover); color: var(--color-cta-hover); text-decoration: none; transform: translateY(-2px); }
+         .btn-nav { padding: 8px 20px; font-size: 0.9rem; }
+         .btn-nav:hover { background-color: var(--color-cta-hover); color: var(--color-cta-text); text-decoration: none; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0, 229, 255, 0.2); }
+ 
+         /* --- Specific Sections Styling --- */
+         /* Navigation */
+         nav { position: fixed; top: 0; left: 0; width: 100%; padding: 15px 0; z-index: 1000; transition: background-color 0.3s ease, box-shadow 0.3s ease; background-color: var(--color-bg-dark-secondary); border-bottom: 1px solid var(--color-border); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+         nav .container { display: flex; justify-content: space-between; align-items: center; }
+         nav .logo { font-weight: 800; font-size: 1.7rem; color: var(--color-text-light); }
+         nav ul { display: flex; align-items: center; }
+         nav ul li { margin-left: 35px; }
+         nav ul li a { color: var(--color-text-medium); font-weight: 500; font-size: 1rem; }
+         nav ul li a:hover { color: var(--color-text-light); text-decoration: none; }
+ 
+         /* Hero Section */
+         .hero { min-height: 95vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding-top: 160px; padding-bottom: 100px; padding-left: 20px; padding-right: 20px; color: var(--color-text-light); position: relative; overflow: hidden; background: transparent; z-index: 1; }
+         #vanta-hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+         .hero .container { position: relative; z-index: 1; }
+         .hero h1 { font-size: clamp(2.8rem, 7vw, 4.5rem); color: var(--color-text-light); font-weight: 800; max-width: 900px; margin-left: auto; margin-right: auto; }
+         .hero .subheadline { font-size: clamp(1.1rem, 3vw, 1.4rem); max-width: 700px; margin: 1.5em auto 2.5em auto; color: var(--color-text-medium); }
+         .hero .cta-buttons { margin-bottom: 30px; }
+         .hero .btn { padding: 15px 35px; font-size: 1.1rem; }
+         .hero .social-proof-hero span { display: block; margin-bottom: 15px; color: var(--color-text-muted); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+         .hero .social-proof-hero img { height: 25px; margin: 0 12px; opacity: 0.7; filter: brightness(1.5) contrast(0.8) grayscale(100%); display: inline-block; vertical-align: middle; transition: opacity 0.3s ease; }
+         .hero .social-proof-hero img:hover { opacity: 1; }
+ 
+         /* Trusted By Section */
+         .trusted-by { text-align: center; padding: 50px 0; background-color: var(--color-bg-dark-secondary); }
+         .trusted-by span { display: block; margin-bottom: 30px; color: var(--color-text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem; }
+         .trusted-by .logos img { height: 30px; margin: 10px 25px; opacity: 0.6; filter: brightness(0) invert(0.7); display: inline-block; vertical-align: middle; transition: opacity 0.3s ease; }
+         .trusted-by .logos img:hover { opacity: 0.9; }
+ 
+         /* Alternating Feature Sections */
+         .feature-section { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 60px; }
+         .feature-section h3 { font-size: 2rem; margin-bottom: 0.6em; font-weight: 600; color: var(--color-text-light); }
+         .feature-section p { font-size: 1.05rem; margin-bottom: 1.5em; color: var(--color-text-medium); }
+         .feature-section ul li { position: relative; padding-left: 30px; margin-bottom: 12px; color: var(--color-text-medium); }
+         .feature-section ul li i { position: absolute; left: 0; top: 5px; color: var(--color-accent-neon-blue); font-size: 1.1em; }
+         .feature-section img { border-radius: 8px; }
+         .feature-section.reverse .image-content { order: -1; }
+ 
+         /* How it Works (Steps) */
+         .steps-section .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; text-align: center; }
+         .steps-section .step .step-icon { font-size: 2.8rem; margin-bottom: 20px; color: var(--color-accent-neon-blue); transition: transform 0.3s ease; }
+         .steps-section .step:hover .step-icon { transform: scale(1.1) rotate(-5deg); }
+         .steps-section .step h4 { font-size: 1.3rem; margin-bottom: 0.5em; font-weight: 600; color: var(--color-text-light); }
+         .steps-section .step p { font-size: 1rem; color: var(--color-text-medium); }
+ 
+         /* Features Grid Section (More Tools) - Card Flip Styling */
+         #features-more { position: relative; /* Needed for positioning context if bg was used */ }
+         .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 35px; position: relative; z-index: 1; }
+         /* Remove background placeholder */
+         /* #feature-hover-bg { display: none; } */
+ 
+         .feature-item {
+             perspective: 1000px; /* Enable 3D space for children */
+             background-color: transparent; /* Container is transparent */
+             border: none; /* Remove border from container */
+             min-height: 220px; /* Ensure minimum height for flip */
+             cursor: pointer;
+         }
+         .flip-card-inner {
+             position: relative;
+             width: 100%;
+             height: 100%;
+             transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1); /* Smoother flip */
+             transform-style: preserve-3d;
+             min-height: इन्हेरिट; /* Inherit from parent */
+         }
+         /* Flip effect on hover */
+         .feature-item:hover .flip-card-inner {
+             transform: rotateY(180deg);
+             /* Expansion can be added here if needed, e.g., width/height or scale */
+             /* Be cautious with expansion during flip */
+         }
+         .flip-card-front,
+         .flip-card-back {
+             position: absolute;
+             width: 100%;
+             height: 100%;
+             -webkit-backface-visibility: hidden; /* Safari */
+             backface-visibility: hidden;
+             /* Apply card styling here */
+             background-color: var(--color-bg-card);
+             border: 1px solid var(--color-border);
+             border-radius: 8px;
+             padding: 25px;
+             text-align: center;
+             display: flex; /* Use flex for better content centering */
+             flex-direction: column;
+             justify-content: center; /* Center content vertically */
+             align-items: center; /* Center content horizontally */
+         }
+         .flip-card-back {
+             transform: rotateY(180deg); /* Start flipped */
+             /* Style back content */
+             justify-content: space-around; /* Adjust alignment if needed */
+         }
+         .flip-card-back img {
+             display: block;
+             max-width: 85%; /* Control image size */
+             max-height: 150px; /* Control image height */
+             height: auto;
+             margin: 10px auto; /* Center image */
+             border-radius: 4px;
+         }
+          .flip-card-back h4 {
+             font-size: 1.1rem; /* Slightly smaller on back */
+             margin-bottom: 0.4em;
+             color: var(--color-primary-accent); /* Use accent for back title */
+              text-shadow: none; /* Remove 3D effect */
+          }
+          .flip-card-back p {
+              font-size: 0.9rem;
+              color: var(--color-text-medium);
+              margin-bottom: 0;
+          }
+         .feature-item .icon { font-size: 2rem; margin-bottom: 15px; color: var(--color-primary-accent); display: block; }
+         .feature-item h4 { font-size: 1.2rem; margin-bottom: 0.5em; font-weight: 600; color: var(--color-text-light); }
+         .feature-item p { font-size: 0.95rem; color: var(--color-text-medium); }
+ 
+ 
+         /* Elite Features Section (Centering) */
+         .elite-features-section .container { text-align: center; }
+         .elite-feature { display: inline-block; vertical-align: top; max-width: 420px; /* Wider */ margin: 0 20px 40px 20px; text-align: left; }
+         .elite-feature h3 { font-size: 1.8rem; display: flex; align-items: center; gap: 15px; color: var(--color-accent-neon-blue); text-shadow: none; /* Remove default 3d shadow for accent */ }
+         .elite-feature h3 i { font-size: 1.1em; }
+         .elite-feature p { color: var(--color-text-medium); font-size: 1.05rem; }
+ 
+ 
+         /* Testimonials */
+         .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+         .testimonial-card { background-color: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: 10px; padding: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+         .testimonial-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0, 229, 255, 0.1); border-color: var(--color-primary-accent); }
+         .testimonial-card .quote { font-size: 1.05rem; font-style: italic; margin-bottom: 20px; color: var(--color-text-medium); position: relative; padding-left: 30px; }
+         .testimonial-card .quote::before { content: '“'; position: absolute; left: 0; top: -10px; font-size: 2.5em; color: var(--color-primary-accent); opacity: 0.6; }
+         .testimonial-card .author { display: flex; align-items: center; margin-top: 25px; }
+         .testimonial-card .author img { width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; background-color: #555; }
+         .testimonial-card .author-info .name { font-weight: 600; color: var(--color-text-light); }
+         .testimonial-card .author-info .title { font-size: 0.9em; color: var(--color-text-muted); }
+ 
+         /* Pricing Section */
+         .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; align-items: stretch; }
+         .pricing-card { border: 1px solid var(--color-border); border-radius: 10px; padding: 35px; text-align: center; background-color: var(--color-bg-card); display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+         .pricing-card:not(.highlighted):hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0, 229, 255, 0.1); border-color: var(--color-primary-accent); }
+         .pricing-card.highlighted { border-color: var(--color-accent-neon-blue); border-width: 2px; background-color: var(--color-bg-dark-secondary); }
+         .pricing-card.highlighted:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0, 229, 255, 0.2); }
+         .pricing-card h4 { font-size: 1.4rem; margin-bottom: 0.5em; font-weight: 600; color: var(--color-text-light); }
+         .pricing-card .plan-description { font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1.5em; min-height: 40px; }
+         .pricing-card .price { font-size: 3rem; font-weight: 700; color: var(--color-text-light); margin-bottom: 0.2em; }
+         .pricing-card .price span { font-size: 1rem; font-weight: 400; color: var(--color-text-muted); }
+         .pricing-card ul { text-align: left; margin: 30px 0; flex-grow: 1; }
+         .pricing-card ul li { margin-bottom: 12px; padding-left: 30px; position: relative; color: var(--color-text-medium); font-size: 0.95rem; }
+         .pricing-card ul li i { position: absolute; left: 0; top: 5px; color: var(--color-accent-neon-blue); font-size: 0.9em;}
+         .pricing-card .btn { display: block; width: 100%; margin-top: auto; }
+ 
+         /* FAQ Section */
+         .faq-item { border-bottom: 1px solid var(--color-border); padding: 25px 0; }
+         .faq-item:last-child { border-bottom: none; }
+         .faq-question { font-weight: 600; cursor: pointer; position: relative; padding-right: 30px; color: var(--color-text-light); font-size: 1.1rem; transition: color 0.2s ease; }
+         .faq-question:hover { color: var(--color-accent-neon-blue); }
+         .faq-question::after { content: '+'; position: absolute; right: 0; top: 0; font-size: 1.3em; transition: transform 0.3s ease, color 0.2s ease; color: var(--color-text-muted); }
+         .faq-answer { display: none; padding-top: 15px; color: var(--color-text-medium); max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, padding-top 0.4s ease-out; }
+         .faq-item.open .faq-answer { max-height: 300px; display: block; }
+         .faq-item.open .faq-question::after { transform: rotate(45deg); color: var(--color-accent-neon-blue); }
+ 
+         /* Final CTA */
+         .final-cta { text-align: center; }
+         .final-cta h2 { font-size: 2.5rem; margin-bottom: 1em; max-width: 700px; margin-left: auto; margin-right: auto; color: var(--color-text-light); }
+ 
+         /* Footer */
+         footer { background-color: #000000; color: #94A3B8; padding: 40px 0; font-size: 0.9rem; margin-top: 60px; position: relative; z-index: 1; }
+         footer .container { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+         footer .footer-links a { color: #D1D5DB; margin: 0 10px; }
+         footer .footer-links a:hover { color: var(--color-text-light); }
+         footer p { margin-bottom: 0.5em; color: #94A3B8; }
+ 
+         /* --- Animation Classes --- */
+         .animate-on-scroll { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+         .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
+ 
+         /* --- Simple Responsive --- */
+          @media (max-width: 992px) { .container { max-width: 960px; } .feature-section { gap: 40px; } .elite-features-section { grid-template-columns: 1fr; gap: 30px; } .elite-feature { margin-left: auto; margin-right: auto;} }
+          @media (max-width: 768px) { h1 { font-size: 2.5rem !important; } .hero h1 { font-size: clamp(2rem, 7vw, 2.8rem) !important; } .section-header h2, .final-cta h2 { font-size: 1.8rem !important; } .feature-section { grid-template-columns: 1fr; } .feature-section .image-content { margin-top: 30px; } .feature-section.reverse .image-content { order: 0; } nav ul { display: none; } .hero .social-proof-hero img { height: 20px; margin: 5px 8px; } }
+          @media (max-width: 576px) { .btn { width: 100%; margin-bottom: 10px; } .hero .cta-buttons .btn { display: block; } .hero .btn-secondary-link { display: block; margin-left: 0; margin-top: 10px; text-align: center; } .trusted-by .logos img { height: 25px; margin: 8px 10px; } .testimonial-card { padding: 20px; } .pricing-card { padding: 20px; } .pricing-card .price { font-size: 2rem; } .elite-feature { margin-left: 0; margin-right: 0; } }
+ 
+     </style>
+ </head>
+ <body>
+     <!-- Navigation -->
+     <nav id="main-nav">
+         <div class="container">
+             <a href="#" class="logo">SeasonEdge</a>
+             <ul>
+                 <li><a href="#features">Features</a></li>
+                 <li><a href="#how-it-works">How It Works</a></li>
+                  <li><a href="#elite-features">Elite</a></li>
+                 <li><a href="#pricing">Pricing</a></li>
+                 <li><a href="#testimonials">Testimonials</a></li>
+                  <li><a href="#faq">FAQ</a></li>
+                 <li><a href="#">Login</a></li>
+                 <li><a href="#" class="btn btn-primary btn-nav">Get Started</a></li>
+             </ul>
+         </div>
+     </nav>
+ 
+     <!-- Main Content Wrapper -->
+     <main>
+         <!-- Hero Section -->
+         <section class="hero">
+             <div id="vanta-hero-bg"></div> <!-- Vanta background target -->
+             <div class="container">
+                 <h1>Find Your Trading Edge with AI Seasonality</h1>
+                 <p class="subheadline">Leverage decades of market data and advanced AI to uncover high-probability seasonal stock patterns for any custom date range or predefined period.</p>
+                 <div class="hero-cta">
+                     <a href="#" class="btn btn-primary btn-lg">Start 7-Day Free Trial</a>
+                 </div>
+                 <div class="social-proof-hero">
+                     <span>POWERING TRADERS GLOBALLY</span>
+                     <img src="https://via.placeholder.com/100x30/101014/00E5FF?text=QuantCo" alt="QuantCo Logo Placeholder">
+                     <img src="https://via.placeholder.com/100x30/101014/00E5FF?text=Alpha+Fund" alt="Alpha Fund Logo Placeholder">
+                     <img src="https://via.placeholder.com/100x30/101014/00E5FF?text=TradeHub" alt="TradeHub Logo Placeholder">
+                 </div>
+             </div>
+         </section>
+ 
+         <!-- Trusted By Section -->
+         <section class="trusted-by section-opaque-contrast animate-on-scroll">
+              <div class="container">
+                 <span>AS MENTIONED IN LEADING FINANCIAL MEDIA</span>
+                 <div class="logos">
+                     <img src="https://via.placeholder.com/150x40/1A1A1F/A0A0A0?text=MarketPulse" alt="MarketPulse Placeholder Logo">
+                     <img src="https://via.placeholder.com/150x40/1A1A1F/A0A0A0?text=FinTech+Weekly" alt="FinTech Weekly Placeholder Logo">
+                     <img src="https://via.placeholder.com/150x40/1A1A1F/A0A0A0?text=Global+Trader" alt="Global Trader Placeholder Logo">
+                     <img src="https://via.placeholder.com/150x40/1A1A1F/A0A0A0?text=AI+Investor" alt="AI Investor Placeholder Logo">
+                 </div>
+             </div>
+         </section>
+ 
+         <!-- Feature 1: Custom Query -->
+         <section class="section-opaque-dark text-image-section problem-section animate-on-scroll">
+              <div class="container feature-section">
+                  <div class="text-content">
+                      <h3>Find Seasonal Gems for Any Date Range</h3>
+                      <p>Define your exact period (e.g., first week of July, pre-FOMC days) and let our AI rank the top historically performing stocks based on statistical significance, average return, and consistency.</p>
+                      <ul>
+                          <li><i class="fas fa-calendar-alt"></i> Flexible Start/End Date Input</li>
+                          <li><i class="fas fa-filter"></i> Powerful Filtering Options</li>
+                          <li><i class="fas fa-trophy"></i> Data-Driven Stock Ranking</li>
+                      </ul>
+                  </div>
+                  <div class="image-content">
+                      <img src="https://via.placeholder.com/500x350/111827/8892B0?text=Custom+Query+UI+Example" alt="Placeholder UI for custom date range query">
+                  </div>
+              </div>
+         </section>
+ 
+          <!-- Feature 2: Deep Dive + Best Window -->
+         <section class="section-opaque-contrast text-image-section row-reverse animate-on-scroll">
+             <div class="container feature-section reverse">
+                  <div class="text-content">
+                     <h3>Deep Dive & Discover Optimal Windows</h3>
+                      <p>Analyze any stock's detailed seasonal profile year-by-year. Activate the **AI Best Window Finder** to pinpoint the specific short-term periods (5-day, 10-day, etc.) with the highest historical edge.</p>
+                      <ul>
+                          <li><i class="fas fa-magnifying-glass-chart"></i> Stock-Specific Seasonal DNA</li>
+                          <li><i class="fas fa-robot"></i> AI Finds Highest Probability Windows</li>
+                          <li><i class="fas fa-chart-line"></i> Visualize Historical Performance</li>
+                      </ul>
+                  </div>
+                  <div class="image-content">
+                      <img src="https://via.placeholder.com/500x350/1A1A1F/CCD6F6?text=Stock+Deep+Dive+Chart+Example" alt="Placeholder showing stock seasonality chart">
+                  </div>
+              </div>
+         </section>
+ 
+         <!-- How It Works -->
+          <section id="how-it-works" class="section-opaque-dark steps-section animate-on-scroll">
+              <div class="container">
+                   <div class="section-header">
+                      <h2>Simple Workflow, Powerful Results</h2>
+                  </div>
+                  <div class="steps-grid">
+                      <div class="step">
+                          <div class="step-icon"><i class="fas fa-search-dollar"></i></div>
+                          <h4>1. Query or Screen</h4>
+                          <p>Use custom dates, predefined periods, or screen the market.</p>
+                      </div>
+                      <div class="step">
+                          <div class="step-icon"><i class="fas fa-cogs"></i></div>
+                          <h4>2. Analyze Insights</h4>
+                          <p>Review scores, charts, probabilities, and historical data.</p>
+                      </div>
+                      <div class="step">
+                           <div class="step-icon"><i class="fas fa-lightbulb"></i></div>
+                          <h4>3. Inform Your Trades</h4>
+                          <p>Integrate data-driven seasonal edge into your trading plan.</p>
+                      </div>
+                  </div>
+              </div>
+         </section>
+ 
+         <!-- More Features Section (Grid with Flip Hover) -->
+         <section id="features-more" class="section-opaque-contrast features animate-on-scroll">
+             <div class="container">
+                  <div class="section-header">
+                     <h2>More Tools for Your Edge</h2>
+                  </div>
+                  <!-- REMOVED Background Placeholder Div -->
+                  <!-- Grid - Apply flip effect to items -->
+                  <div class="features-grid" id="features-grid-container">
+                     <!-- Item 1 -->
+                     <div class="feature-item animate-on-scroll">
+                          <div class="flip-card-inner">
+                              <div class="flip-card-front">
+                                  <div class="icon"><i class="far fa-calendar-check"></i></div>
+                                  <h4>Predefined Periods</h4>
+                                  <p>Quickly analyze Quarters, Months, Holidays, Earnings runs, and more.</p>
+                              </div>
+                              <div class="flip-card-back">
+                                  <h4>Predefined Periods</h4>
+                                  <img src="https://via.placeholder.com/300x200/112240/8892B0?text=Image:+Periods" alt="Placeholder Image for Predefined Periods">
+                                  <p>Instantly access common seasonal event analysis.</p>
+                              </div>
+                          </div>
+                      </div>
+                      <!-- Item 2 -->
+                      <div class="feature-item animate-on-scroll">
+                          <div class="flip-card-inner">
+                              <div class="flip-card-front">
+                                  <div class="icon"><i class="fas fa-exchange-alt"></i></div>
+                                  <h4>Stock Comparison</h4>
+                                  <p>Compare seasonal metrics side-by-side for two different assets.</p>
+                              </div>
+                              <div class="flip-card-back">
+                                  <h4>Stock Comparison</h4>
+                                  <img src="https://via.placeholder.com/300x200/112240/8892B0?text=Image:+Compare" alt="Placeholder Image for Stock Comparison">
+                                  <p>Make better choices between potential trades.</p>
+                              </div>
+                          </div>
+                      </div>
+                      <!-- Item 3 -->
+                      <div class="feature-item animate-on-scroll">
+                          <div class="flip-card-inner">
+                              <div class="flip-card-front">
+                                  <div class="icon"><i class="fas fa-clock"></i></div>
+                                  <h4>Intraday Patterns</h4>
+                                  <p>Analyze recurring patterns and tendencies within specific hours of the trading day.</p>
+                              </div>
+                              <div class="flip-card-back">
+                                   <h4>Intraday Patterns</h4>
+                                  <img src="https://via.placeholder.com/300x200/112240/8892B0?text=Image:+Intraday" alt="Placeholder Image for Intraday Patterns">
+                                   <p>Optimize entries/exits based on typical time-of-day behavior.</p>
+                              </div>
+                          </div>
+                      </div>
+                      <!-- Item 4 -->
+                      <div class="feature-item animate-on-scroll">
+                          <div class="flip-card-inner">
+                              <div class="flip-card-front">
+                                  <div class="icon"><i class="fas fa-calendar-day"></i></div>
+                                  <h4>Day/Week Effects</h4>
+                                  <p>Identify historical bias related to specific days (e.g., Turn-of-Month).</p>
+                              </div>
+                              <div class="flip-card-back">
+                                   <h4>Day/Week Effects</h4>
+                                  <img src="https://via.placeholder.com/300x200/112240/8892B0?text=Image:+Day/Week" alt="Placeholder Image for Day/Week Effects">
+                                   <p>Leverage recurring short-term calendar patterns.</p>
+                              </div>
+                          </div>
+                      </div>
+                      <!-- Item 5 -->
+                      <div class="feature-item animate-on-scroll">
+                          <div class="flip-card-inner">
+                              <div class="flip-card-front">
+                                  <div class="icon"><i class="fas fa-list-alt"></i></div>
+                                  <h4>Seasonal Watchlists</h4>
+                                  <p>Save findings and get timely alerts before key seasonal windows approach.</p>
+                              </div>
+                              <div class="flip-card-back">
+                                  <h4>Seasonal Watchlists</h4>
+                                  <img src="https://via.placeholder.com/300x200/112240/8892B0?text=Image:+Watchlist" alt="Placeholder Image for Watchlists">
+                                  <p>Stay organized and never miss an upcoming opportunity.</p>
+                               </div>
+                          </div>
+                      </div>
+                      <!-- Item 6 -->
+                      <div class="feature-item animate-on-scroll">
+                          <div class="flip-card-inner">
+                              <div class="flip-card-front">
+                                  <div class="icon"><i class="fas fa-tachometer-alt"></i></div>
+                                  <h4>Dashboard Overview</h4>
+                                  <p>Instantly see top seasonal opportunities for the current week and month.</p>
+                              </div>
+                              <div class="flip-card-back">
+                                  <h4>Dashboard Overview</h4>
+                                  <img src="https://via.placeholder.com/300x200/112240/8892B0?text=Image:+Dashboard" alt="Placeholder Image for Dashboard">
+                                  <p>Quickly spot current high-probability setups.</p>
+                              </div>
+                          </div>
+                      </div>
+                 </div>
+             </div>
+         </section>
+ 
+          <!-- Elite Features Teaser Section -->
+         <section id="elite-features" class="section-opaque-dark elite-features-section animate-on-scroll">
+              <div class="container">
+                  <div class="section-header">
+                     <h2>Unlock Elite Features</h2>
+                     <p>Take your seasonal analysis to the next level with predictive AI and expert guidance.</p>
+                  </div>
+                  <div style="text-align: center;"> <!-- Centering wrapper -->
+                      <div class="elite-feature">
+                          <h3><i class="fas fa-wand-magic-sparkles"></i> AI Trade Predictor</h3>
+                          <p>Our machine learning model predicts the likelihood of a stock *outperforming* its historical seasonal average for your chosen period, adding another layer of conviction.</p>
+                      </div>
+                      <div class="elite-feature">
+                          <h3><i class="fas fa-user-tie"></i> Expert Trading Sessions</h3>
+                          <p>Join live sessions with professional traders discussing market context, seasonal setups identified by SeasonEdge, and trade management techniques.</p>
+                      </div>
+                  </div>
+              </div>
+         </section>
+ 
+          <!-- Testimonials Section -->
+         <section id="testimonials" class="section-opaque-contrast testimonials animate-on-scroll">
+              <div class="container">
+                 <div class="section-header">
+                      <h2>Why Traders Choose SeasonEdge</h2>
+                 </div>
+                 <div class="testimonials-grid">
+                      <div class="testimonial-card"> <p class="quote">"The Best Window Finder is incredible. It highlighted a recurring 2-week pre-holiday rally in $XYZ I never knew existed. Paid off big time."</p> <div class="author"> <img src="https://via.placeholder.com/50x50/777/ccc?text=SR" alt="User SR Placeholder"> <div class="author-info"> <span class="name">Sarah R.</span> <span class="title">Swing Trader</span> </div> </div> </div>
+                      <div class="testimonial-card"> <p class="quote">"I used the Custom Date Range query to analyze the week before FOMC meetings for indices. Found a consistent edge I now incorporate."</p> <div class="author"> <img src="https://via.placeholder.com/50x50/777/ccc?text=MB" alt="User MB Placeholder"> <div class="author-info"> <span class="name">Marcus B.</span> <span class="title">Futures Trader</span> </div> </div> </div>
+                      <div class="testimonial-card"> <p class="quote">"Finally, a seasonality tool that respects statistics. The AI Predictor score in the Elite plan adds that extra layer of confidence."</p> <div class="author"> <img src="https://via.placeholder.com/50x50/777/ccc?text=AK" alt="User AK Placeholder"> <div class="author-info"> <span class="name">Anna K.</span> <span class="title">Data-Driven Investor</span> </div> </div> </div>
+                 </div>
+             </div>
+         </section>
+ 
+         <!-- Pricing Section -->
+         <section id="pricing" class="section-opaque-dark pricing animate-on-scroll">
+              <div class="container">
+                  <div class="section-header">
+                      <h2>Simple Plans, Powerful Edge</h2>
+                      <p>Choose the level of access that aligns with your trading goals.</p>
+                  </div>
+                  <div class="pricing-grid">
+                      <!-- Plan 1: Free -->
+                      <div class="pricing-card">
+                          <h4>Explorer</h4>
+                          <p class="plan-description">Explore basic seasonal tendencies.</p>
+                          <div class="price">$0<span>/ forever</span></div>
+                          <ul>
+                              <li><i class="fas fa-check"></i> Basic Dashboard View</li>
+                              <li><i class="fas fa-check"></i> Predefined Periods (Limited)</li>
+                              <li><i class="fas fa-check"></i> Analyze 5 Stocks per Month</li>
+                              <li><i class="fas fa-times" style="color: var(--color-text-muted);"></i> Custom Date Range Queries</li>
+                              <li><i class="fas fa-times" style="color: var(--color-text-muted);"></i> Stock Deep Dive & Window Finder</li>
+                              <li><i class="fas fa-times" style="color: var(--color-text-muted);"></i> Watchlist & Alerts</li>
+                              <li><i class="fas fa-times" style="color: var(--color-text-muted);"></i> AI Predictor / Expert Sessions</li>
+                          </ul>
+                          <a href="#" class="btn btn-secondary-outline">Sign Up Free</a>
+                      </div>
+                      <!-- Plan 2: Pro Trader (Highlighted) -->
+                      <div class="pricing-card highlighted">
+                          <h4>Pro Trader</h4>
+                          <p class="plan-description">Full access to core AI analysis tools.</p>
+                          <div class="price">$49<span>/ month</span></div>
+                          <ul>
+                              <li><i class="fas fa-check"></i> Everything in Explorer PLUS:</li>
+                              <li><i class="fas fa-check"></i> Custom Date Range Queries</li>
+                              <li><i class="fas fa-check"></i> Single Stock Deep Dive</li>
+                              <li><i class="fas fa-check"></i> AI Best Window Finder</li>
+                              <li><i class="fas fa-check"></i> Multi-Stock Comparison</li>
+                              <li><i class="fas fa-check"></i> Unlimited Watchlists & Alerts</li>
+                              <li><i class="fas fa-check"></i> Full Historical Data Access</li>
+                              <li><i class="fas fa-check"></i> Backtesting Module</li>
+                              <li><i class="fas fa-check"></i> Priority Email Support</li>
+                          </ul>
+                          <a href="#" class="btn btn-primary">Start 7-Day Pro Trial</a>
+                      </div>
+                      <!-- Plan 3: Elite -->
+                      <div class="pricing-card">
+                          <h4>Elite</h4>
+                          <p class="plan-description">Predictive AI, expert access & premium features.</p>
+                          <div class="price">$99<span>/ month</span></div>
+                          <ul>
+                             <li><i class="fas fa-check"></i> Everything in Pro Trader PLUS:</li>
+                              <li><i class="fas fa-star"></i> **AI-Powered Trade Predictor**</li>
+                              <li><i class="fas fa-chalkboard-teacher"></i> **Live Expert Trading Sessions**</li>
+                              <li><i class="fas fa-check"></i> Full Market Data Coverage</li>
+                              <li><i class="fas fa-check"></i> API Access (Beta)</li>
+                              <li><i class="fas fa-check"></i> Dedicated Support Channel</li>
+                          </ul>
+                          <a href="#" class="btn btn-secondary-outline">Go Elite</a>
+                      </div>
+                  </div>
+              </div>
+         </section>
+ 
+          <!-- FAQ Section -->
+          <section id="faq" class="section-opaque-contrast faq animate-on-scroll">
+               <div class="container" style="max-width: 800px;">
+                   <div class="section-header"> <h2>Common Questions</h2> </div>
+                  <div class="faq-list">
+                      <div class="faq-item">
+                         <h4 class="faq-question">What data sources does SeasonEdge use?</h4>
+                         <div class="faq-answer"> <p>We utilize decades of high-quality, adjusted End-of-Day (EOD) historical price data from leading, reputable financial data providers, covering major US stocks and ETFs. Data integrity is a top priority.</p> </div>
+                     </div>
+                      <div class="faq-item">
+                         <h4 class="faq-question">Is seasonality guaranteed to work?</h4>
+                         <div class="faq-answer"> <p>No trading strategy offers guaranteed profits. Seasonality identifies historical probabilities and tendencies based on statistical analysis. While this provides a potential edge by highlighting periods where odds may have been historically favorable, past performance does not guarantee future results. Always use proper risk management.</p> </div>
+                     </div>
+                      <div class="faq-item">
+                         <h4 class="faq-question">How does the 'Best Window Finder' work?</h4>
+                         <div class="faq-answer"> <p>For your chosen stock and a specific duration (e.g., 10 trading days), the AI analyzes every possible overlapping 10-day window throughout the year across decades of historical data. It calculates key metrics like average return, win rate (% of positive periods), and a combined Seasonality Score for each window, then ranks them to highlight the periods with the statistically strongest historical performance bias (positive or negative).</p> </div>
+                     </div>
+                     <div class="faq-item">
+                         <h4 class="faq-question">What happens in the Expert Trading Sessions?</h4>
+                         <div class="faq-answer"> <p>Included in the Elite plan, these are live online webinars hosted multiple times a week by experienced market practitioners. They typically discuss current market context, analyze potential seasonal setups found using SeasonEdge in real-time, cover practical trade management techniques, risk considerations, and answer member questions interactively. Recordings are usually available for later viewing.</p> </div>
+                     </div>
+                      <div class="faq-item">
+                         <h4 class="faq-question">Can I cancel my subscription anytime?</h4>
+                         <div class="faq-answer"> <p>Yes, absolutely. Both monthly and annual subscriptions can be managed or canceled at any time directly from your account settings page. If you cancel, your access will continue until the end of your current paid billing period.</p> </div>
+                     </div>
+                  </div>
+              </div>
+          </section>
+ 
+          <!-- Final CTA -->
+          <section class="section-opaque-dark final-cta animate-on-scroll">
+               <div class="container">
+                  <h2>Stop Guessing. Start Trading with a Seasonal Edge.</h2>
+                  <a href="#" class="btn btn-primary btn-lg">Get Started with SeasonEdge</a>
+              </div>
+          </section>
+ 
+     </main>
+ 
+     <!-- Footer -->
+     <footer>
+          <div class="container">
+             <div class="footer-links"> <a href="#">Blog</a> | <a href="#">Contact</a> | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a> </div>
+              <p>&copy; [Current Year] SeasonEdge [Your Company Name]. All Rights Reserved.</p>
+              <p style="font-size: 0.8rem; opacity: 0.7;">Disclaimer: Trading involves substantial risk. Past performance and seasonal patterns are not guarantees of future results. Website content, images, and logos are illustrative examples/placeholders and must be replaced.</p>
+          </div>
+     </footer>
+ 
+     <!-- Vanta.js and Three.js Scripts -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.halo.min.js"></script>
+ 
+     <!-- Initialization & Basic Interaction Script -->
+     <script>
+         // --- VANTA Background ---
+         document.addEventListener('DOMContentLoaded', (event) => {
+             const vantaTargetElement = document.getElementById('vanta-hero-bg');
+             if (window.VANTA && window.VANTA.HALO && vantaTargetElement) {
+                 try {
+                     VANTA.HALO({
+                       el: "#vanta-hero-bg",
+                       mouseControls: true,
+                       touchControls: true,
+                       gyroControls: false,
+                       minHeight: 200.00,
+                       minWidth: 200.00,
+                       backgroundColor: 0x101014,
+                       baseColor: 0x1A1A1F,
+                       xOffset: 0.30,
+                       size: 0.80
+                     })
+                 } catch (e) { console.error("Vanta.js initialization failed:", e); }
+             } else { console.error("Vanta.js or HALO effect or target element #vanta-hero-bg not found."); }
+         });
+ 
+         // --- Basic Nav Scroll Effect ---
+         const nav = document.getElementById('main-nav');
+         if(nav){
+             window.addEventListener('scroll', () => {
+                 if (window.scrollY > 10) {
+                     nav.classList.add('scrolled');
+                 } else {
+                     nav.classList.remove('scrolled');
+                 }
+             });
+         }
+ 
+         // --- Basic FAQ Toggle ---
+         const faqItems = document.querySelectorAll('.faq-item');
+         faqItems.forEach(item => {
+             const question = item.querySelector('.faq-question');
+             const answer = item.querySelector('.faq-answer');
+             if(question && answer){
+                 question.addEventListener('click', () => {
+                     if (item.classList.contains('open')) {
+                         item.classList.remove('open');
+                         answer.style.maxHeight = null;
+                     } else {
+                         // Optional: Close others
+                         faqItems.forEach(otherItem => {
+                             if (otherItem.classList.contains('open')) {
+                                  otherItem.classList.remove('open');
+                                  otherItem.querySelector('.faq-answer').style.maxHeight = null;
+                             }
+                         });
+                         item.classList.add('open');
+                         answer.style.maxHeight = answer.scrollHeight + "px";
+                     }
+                 });
+             }
+         });
+ 
+         // --- Basic Scroll Animation Trigger ---
+         const animatedElements = document.querySelectorAll('.animate-on-scroll');
+         const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+         const observer = new IntersectionObserver((entries, observerRef) => {
+             entries.forEach(entry => {
+                 if (entry.isIntersecting) {
+                     entry.target.classList.add('visible');
+                     observerRef.unobserve(entry.target);
+                 }
+             });
+         }, observerOptions);
+         animatedElements.forEach(el => { if(el){ observer.observe(el); } });
+ 
+         // --- REMOVED Feature Grid Hover Effect JS ---
+         // Kept structure for flip cards in HTML/CSS
+ 
+     </script>
+ 
+ </body>
+ </html>
